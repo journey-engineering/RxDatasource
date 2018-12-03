@@ -1,0 +1,6 @@
+framework module Pods_RxDataSource_tvOS {
+  umbrella header "Pods-RxDataSource-tvOS-umbrella.h"
+
+  export *
+  module * { export * }
+}
