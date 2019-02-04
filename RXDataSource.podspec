@@ -8,5 +8,6 @@ Pod::Spec.new do |s|
   s.ios.deployment_target = '10.0'
   s.source = { :git => 'https://github.com/thib4ult/RxDataSource.git', :tag => s.version }
   s.source_files = 'RxDataSource/**/*.swift'
-  s.dependency 'RxSwift', '~> 4.4.0'
+  s.dependency 'RxCocoa', '~> 4.4'
+  s.dependency 'RxSwift', '~> 4.4'
 end

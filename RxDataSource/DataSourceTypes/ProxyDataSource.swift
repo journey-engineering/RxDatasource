@@ -8,6 +8,7 @@
 
 import Foundation
 import RxSwift
+import RxCocoa
 
 /// `DataSource` implementation that returns data from
 /// another dataSource (called inner dataSource).
@@ -24,7 +25,7 @@ public final class ProxyDataSource: DataSource {
 	fileprivate let disposeBag = DisposeBag()
 	fileprivate var lastDisposable: Disposable?
 
-	public let innerDataSource: Variable<DataSource>
+	public let innerDataSource: BehaviorRelay<DataSource>
 
 	/// When `true`, switching innerDataSource produces
 	/// a dataChange consisting of deletions of all the
@@ -32,12 +33,12 @@ public final class ProxyDataSource: DataSource {
 	/// the sections of the new innerDataSource.
 	///
 	/// when `false`, switching innerDataSource produces `DataChangeReloadData`.
-	public let animatesChanges: Variable<Bool>
+	public let animatesChanges: BehaviorRelay<Bool>
 
 	public init(_ inner: DataSource = EmptyDataSource(), animateChanges: Bool = true) {
 		self.changes = BehaviorSubject(value: DataChangeBatch([]))
-		self.innerDataSource = Variable(inner)
-		self.animatesChanges = Variable(animateChanges)
+		self.innerDataSource = BehaviorRelay(value: inner)
+		self.animatesChanges = BehaviorRelay(value: animateChanges)
 
 		self.lastDisposable = inner.changes.asObservable().subscribe { [weak self] in
 			self?.changes.on($0)

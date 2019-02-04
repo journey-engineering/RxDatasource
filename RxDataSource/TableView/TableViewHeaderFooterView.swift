@@ -8,6 +8,7 @@
 
 import UIKit
 import RxSwift
+import RxCocoa
 
 /// `UITableViewHeaderFooterView` subclass that implements `DataSourceItemReceiver` protocol
 /// by putting received dataSource items into a `MutableProperty` called `viewModel`.
@@ -18,10 +19,10 @@ import RxSwift
 ///   protocol directly in any `UITableViewHeaderFooterView` subclass.
 open class TableViewHeaderFooterView: UITableViewHeaderFooterView, DataSourceItemReceiver {
 
-	public final let viewModel = Variable<Any?>(nil)
+	public final let cellModel = BehaviorRelay<Any?>(value: nil)
 
 	open func ds_setItem(_ item: Any) {
-		self.viewModel.value = item
+		self.cellModel.accept(item)
 	}
 
 }

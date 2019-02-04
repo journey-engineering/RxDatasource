@@ -8,6 +8,7 @@
 
 import Foundation
 import RxSwift
+import RxCocoa
 
 /// `DataSource` implementation that has an arbitrary
 /// number of sections of items of type T.
@@ -37,7 +38,7 @@ public final class AutoDiffSectionsDataSource<T>: DataSource {
 	///
 	/// Every modification of the array causes calculation
 	/// and emission of appropriate dataChanges.
-	public let sections: Variable<[DataSourceSection<T>]>
+	public let sections: BehaviorRelay<[DataSourceSection<T>]>
 
 	/// Function that is used to compare a pair of sections for identity.
 	/// Returns `true` if the sections are identical, in which case the items
@@ -65,7 +66,7 @@ public final class AutoDiffSectionsDataSource<T>: DataSource {
 		compareItems: @escaping (T, T) -> Bool)
 	{
 		self.changes = BehaviorSubject(value: DataChangeBatch([]))
-		self.sections = Variable(sections)
+		self.sections = BehaviorRelay(value: sections)
 		self.compareSections = compareSections
 		self.compareItems = compareItems
 		func autoDiff(_ oldSections: [DataSourceSection<T>],

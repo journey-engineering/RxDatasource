@@ -8,6 +8,7 @@
 
 import Foundation
 import RxSwift
+import RxCocoa
 
 /// `DataSource` implementation that has one section of items of type T.
 ///
@@ -25,7 +26,7 @@ public final class AutoDiffDataSource<T>: DataSource {
 	/// Every modification of the array causes calculation
 	/// and emission of appropriate dataChanges.
 	
-	public let items: Variable<[T]>
+	public let items: BehaviorRelay<[T]>
 	
 	public let supplementaryItems: [String: Any]
 	
@@ -47,7 +48,7 @@ public final class AutoDiffDataSource<T>: DataSource {
 							compare: @escaping (T, T) -> Bool)
 	{
 		self.changes = BehaviorSubject(value: DataChangeBatch([]))
-		self.items = Variable(items)
+		self.items = BehaviorRelay(value: items)
 		self.supplementaryItems = supplementaryItems
 		self.compare = compare
 		func autoDiff(_ old: [T], new: [T]) -> DataChange {

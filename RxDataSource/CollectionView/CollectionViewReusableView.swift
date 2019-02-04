@@ -8,6 +8,7 @@
 
 import UIKit
 import RxSwift
+import RxCocoa
 
 /// `UICollectionReusableView` subclass that implements `DataSourceItemReceiver` protocol
 /// by putting received dataSource items into a `MutableProperty` called `viewModel`.
@@ -18,10 +19,10 @@ import RxSwift
 ///   protocol directly in any `UICollectionReusableView` subclass.
 open class CollectionViewReusableView: UICollectionReusableView, DataSourceItemReceiver {
 
-	public final let viewModel = Variable<Any?>(nil)
+	public final let viewModel = BehaviorRelay<Any?>(value: nil)
 
 	open func ds_setItem(_ item: Any) {
-		self.viewModel.value = item
+		self.viewModel.accept(item)
 	}
 
 }

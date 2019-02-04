@@ -8,6 +8,7 @@
 
 import UIKit
 import RxSwift
+import RxCocoa
 
 /// `UITableViewCell` subclass that implements `DataSourceItemReceiver` protocol
 /// by putting received dataSource items into a `MutableProperty` called `cellModel`.
@@ -18,10 +19,10 @@ import RxSwift
 ///   protocol directly in any `UITableViewCell` subclass.
 open class TableViewCell: UITableViewCell, DataSourceItemReceiver {
 
-	public final let cellModel = Variable<Any?>(nil)
+	public final let cellModel = BehaviorRelay<Any?>(value: nil)
 
 	open func ds_setItem(_ item: Any) {
-		self.cellModel.value = item
+		self.cellModel.accept(item)
 	}
 
 }

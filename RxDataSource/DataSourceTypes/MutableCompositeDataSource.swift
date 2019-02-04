@@ -8,6 +8,7 @@
 
 import Foundation
 import RxSwift
+import RxCocoa
 
 /// `DataSource` implementation that is composed of a mutable array
 /// of other dataSources (called inner dataSources).
@@ -21,15 +22,15 @@ public final class MutableCompositeDataSource: DataSource {
 
 	public let changes: BehaviorSubject<DataChange>
 	fileprivate let disposeBag = DisposeBag()
-	fileprivate let _innerDataSources: Variable<[DataSource]>
+	fileprivate let _innerDataSources: BehaviorRelay<[DataSource]>
 
-	public var innerDataSources: Variable<[DataSource]> {
+	public var innerDataSources: BehaviorRelay<[DataSource]> {
 		return _innerDataSources
 	}
 
 	public init(_ inner: [DataSource] = []) {
 		self.changes = BehaviorSubject(value: DataChangeBatch([]))
-		self._innerDataSources = Variable(inner)
+		self._innerDataSources = BehaviorRelay(value: inner)
 		self._innerDataSources.asObservable().flatMap { changesOfInnerDataSources($0) }.subscribe { [weak self] in
 			self?.changes.on($0)
 		}.disposed(by: self.disposeBag)
@@ -73,7 +74,9 @@ public final class MutableCompositeDataSource: DataSource {
 	/// Inserts an array of dataSources at a given index
 	/// and emits `DataChangeInsertSections` for their sections.
 	public func insert(_ dataSources: [DataSource], at index: Int) {
-		self._innerDataSources.value.insert(contentsOf: dataSources, at: index)
+		var inner = self._innerDataSources.value
+		inner.insert(contentsOf: dataSources, at: index)
+		self._innerDataSources.accept(inner)
 		let sections = dataSources.enumerated().flatMap { self.sections(of: $1, at: index + $0) }
 		if sections.count > 0 {
 			let change = DataChangeInsertSections(sections)
@@ -91,7 +94,9 @@ public final class MutableCompositeDataSource: DataSource {
 	/// and emits `DataChangeDeleteSections` for its corresponding sections.
 	public func delete(in range: Range<Int>) {
 		let sections = range.flatMap(self.sectionsOfDataSource)
-		self._innerDataSources.value.removeSubrange(range)
+		var inner = self._innerDataSources.value
+		inner.removeSubrange(range)
+		self._innerDataSources.accept(inner)
 		if sections.count > 0 {
 			let change = DataChangeDeleteSections(sections)
 			self.changes.onNext(change)
@@ -111,7 +116,9 @@ public final class MutableCompositeDataSource: DataSource {
 		if newSections.count > 0 {
 			batch.append(DataChangeInsertSections(newSections))
 		}
-		self._innerDataSources.value[index] = dataSource
+		var inner = self._innerDataSources.value
+		inner[index] = dataSource
+		self._innerDataSources.accept(inner)
 		if !batch.isEmpty {
 			let change = DataChangeBatch(batch)
 			self.changes.onNext(change)
@@ -122,8 +129,10 @@ public final class MutableCompositeDataSource: DataSource {
 	/// and emits a batch of `DataChangeMoveSection` for its sections.
 	public func moveData(at oldIndex: Int, to newIndex: Int) {
 		let oldLocation = mapOutside(self._innerDataSources.value, oldIndex)(0)
-		let dataSource = self._innerDataSources.value.remove(at: oldIndex)
-		self._innerDataSources.value.insert(dataSource, at: newIndex)
+		var inner = self._innerDataSources.value
+		let dataSource = inner.remove(at: oldIndex)
+		inner.insert(dataSource, at: newIndex)
+		self._innerDataSources.accept(inner)
 		let newLocation = mapOutside(self._innerDataSources.value, newIndex)(0)
 		let numberOfSections = dataSource.numberOfSections
 		let batch: [DataChange] = (0 ..< numberOfSections).map {
