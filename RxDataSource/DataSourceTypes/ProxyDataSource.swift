@@ -22,7 +22,7 @@ import RxCocoa
 public final class ProxyDataSource: DataSource {
 
 	public let changes: BehaviorSubject<DataChange>
-	fileprivate let disposeBag = DisposeBag()
+	fileprivate let disposable = CompositeDisposable()
 	fileprivate var lastDisposable: Disposable?
 
 	public let innerDataSource: BehaviorRelay<DataSource>
@@ -40,22 +40,24 @@ public final class ProxyDataSource: DataSource {
 		self.innerDataSource = BehaviorRelay(value: inner)
 		self.animatesChanges = BehaviorRelay(value: animateChanges)
 
-		self.lastDisposable = inner.changes.asObservable().subscribe { [weak self] in
+		self.lastDisposable = inner.changes.subscribe { [weak self] in
 			self?.changes.on($0)
 		}
 
-		self.innerDataSource.asObservable().combinePrevious(inner).subscribe(onNext: { [weak self] old, new in
+		let subscription = self.innerDataSource.combinePrevious(inner).subscribe(onNext: { [weak self] old, new in
 			if let this = self {
 				this.lastDisposable?.dispose()
 				this.changes.onNext(changeDataSources(old, new, this.animatesChanges.value))
-				this.lastDisposable = new.changes.asObservable().subscribe { [weak self] in
+				this.lastDisposable = new.changes.subscribe { [weak self] in
 					self?.changes.on($0)
 				}
 			}
-		}).disposed(by: self.disposeBag)
+		})
+		_  = self.disposable.insert(subscription)
 	}
 
 	deinit {
+		self.disposable.dispose()
 		self.lastDisposable?.dispose()
 	}
 

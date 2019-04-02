@@ -19,7 +19,6 @@ import RxSwift
 public final class MappedDataSource: DataSource {
 
 	public let changes: BehaviorSubject<DataChange>
-	fileprivate let disposeBag = DisposeBag()
 
 	public let innerDataSource: DataSource
 

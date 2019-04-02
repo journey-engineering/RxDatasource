@@ -31,7 +31,7 @@ public final class MutableCompositeDataSource: DataSource {
 	public init(_ inner: [DataSource] = []) {
 		self.changes = BehaviorSubject(value: DataChangeBatch([]))
 		self._innerDataSources = BehaviorRelay(value: inner)
-		self._innerDataSources.asObservable().flatMap { changesOfInnerDataSources($0) }.subscribe { [weak self] in
+		self._innerDataSources.flatMap { changesOfInnerDataSources($0) }.subscribe { [weak self] in
 			self?.changes.on($0)
 		}.disposed(by: self.disposeBag)
 	}

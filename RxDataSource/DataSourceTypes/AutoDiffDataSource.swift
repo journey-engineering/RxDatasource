@@ -56,7 +56,7 @@ public final class AutoDiffDataSource<T>: DataSource {
 			return DataChangeBatch(result.toItemChanges())
 		}
 		
-		self.items.asObservable()
+		self.items
 			.combinePrevious(items)
 			.map(autoDiff)
 			.subscribe { [weak self] in

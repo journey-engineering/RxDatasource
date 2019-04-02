@@ -91,7 +91,7 @@ public final class AutoDiffSectionsDataSource<T>: DataSource {
 			return DataChangeBatch(changes)
 		}
 
-		self.sections.asObservable()
+		self.sections
 			.combinePrevious(sections)
 			.map(autoDiff)
 			.subscribe { [weak self] in
