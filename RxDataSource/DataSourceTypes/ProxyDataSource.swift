@@ -39,7 +39,6 @@ public final class ProxyDataSource: DataSource {
 		self.changes = BehaviorSubject(value: DataChangeBatch([]))
 		self.innerDataSource = BehaviorRelay(value: inner)
 		self.animatesChanges = BehaviorRelay(value: animateChanges)
-
 		self.lastDisposable = inner.changes.subscribe { [weak self] in
 			self?.changes.on($0)
 		}

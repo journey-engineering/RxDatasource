@@ -40,11 +40,11 @@ open class TableViewDataSource: NSObject, UITableViewDataSource {
 	
 	public override init() {
 		super.init()
-		self.dataSource.changes.asObserver().subscribe { [weak self] change in
+		self.dataSource.changes.subscribe(onNext: { [weak self] change in
 			if let this = self, let dataChangeTarget = this.dataChangeTarget ?? this.tableView {
-				change.element?.apply(to: dataChangeTarget)
+				change.apply(to: dataChangeTarget)
 			}
-			}.disposed(by: disposeBag)
+		}).disposed(by: disposeBag)
 	}
 	
 	open func configureCell(_ cell: UITableViewCell, forRowAt indexPath: IndexPath) {
