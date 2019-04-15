@@ -8,6 +8,7 @@
 
 import Foundation
 import RxSwift
+import RxCocoa
 
 /// `DataSource` implementation that has an immutable array of section.
 /// 
@@ -17,12 +18,12 @@ import RxSwift
 /// Never emits any dataChanges.
 public final class StaticDataSource<T>: DataSource {
 
-	public let changes: BehaviorSubject<DataChange>
+	public let changes: BehaviorRelay<DataChange>
 
 	public let sections: [DataSourceSection<T>]
 
 	public init(sections: [DataSourceSection<T>]) {
-		self.changes = BehaviorSubject(value: DataChangeBatch([]))
+		self.changes = BehaviorRelay(value: DataChangeBatch([]))
 		self.sections = sections
 	}
 

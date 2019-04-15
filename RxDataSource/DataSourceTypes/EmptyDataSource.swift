@@ -8,15 +8,16 @@
 
 import Foundation
 import RxSwift
+import RxCocoa
 
 /// `DataSource` implementation that has zero sections.
 ///
 /// Never emits any dataChanges.
 public final class EmptyDataSource: DataSource {
-	public var changes: BehaviorSubject<DataChange>
+	public var changes: BehaviorRelay<DataChange>
 
 	public init() {
-		self.changes = BehaviorSubject(value: DataChangeBatch([]))
+		self.changes = BehaviorRelay(value: DataChangeBatch([]))
 	}
 
 	public let numberOfSections = 0

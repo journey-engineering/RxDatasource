@@ -8,6 +8,7 @@
 
 import Foundation
 import RxSwift
+import RxCocoa
 
 /// `DataSource` implementation that returns data from
 /// another dataSource (called inner dataSource) after transforming
@@ -18,7 +19,7 @@ import RxSwift
 /// and emits them as its own changes.
 public final class MappedDataSource: DataSource {
 
-	public let changes: BehaviorSubject<DataChange>
+	public let changes: BehaviorRelay<DataChange>
 
 	public let innerDataSource: DataSource
 

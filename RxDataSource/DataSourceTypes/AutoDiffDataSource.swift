@@ -18,7 +18,7 @@ import RxCocoa
 /// insert and move individual items.
 public final class AutoDiffDataSource<T>: DataSource {
 	
-	public let changes: BehaviorSubject<DataChange>
+	public let changes: BehaviorRelay<DataChange>
 	fileprivate let disposeBag = DisposeBag()
 	
 	/// Mutable array of items in the only section of the autoDiffDataSource.
@@ -47,7 +47,7 @@ public final class AutoDiffDataSource<T>: DataSource {
 							findMoves: Bool = true,
 							compare: @escaping (T, T) -> Bool)
 	{
-		self.changes = BehaviorSubject(value: DataChangeBatch([]))
+		self.changes = BehaviorRelay(value: DataChangeBatch([]))
 		self.items = BehaviorRelay(value: items)
 		self.supplementaryItems = supplementaryItems
 		self.compare = compare
@@ -59,9 +59,9 @@ public final class AutoDiffDataSource<T>: DataSource {
 		self.items
 			.combinePrevious(items)
 			.map(autoDiff)
-			.subscribe { [weak self] in
-				self?.changes.on($0)
-			}.disposed(by: self.disposeBag)
+			.subscribe(onNext: { [weak self] in
+				self?.changes.accept($0)
+			}).disposed(by: self.disposeBag)
 	}
 	
 	public let numberOfSections = 1

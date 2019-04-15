@@ -8,6 +8,7 @@
 
 import Foundation
 import RxSwift
+import RxCocoa
 
 /// A provider of items grouped into sections.
 /// Each section can optionally have a collection
@@ -20,7 +21,7 @@ public protocol DataSource {
 
 	/// A push-driven stream of values that represent every modification
 	/// of the dataSource contents immediately after they happen.
-	var changes: BehaviorSubject<DataChange> { get }
+	var changes: BehaviorRelay<DataChange> { get }
 
 	var numberOfSections: Int { get }
 

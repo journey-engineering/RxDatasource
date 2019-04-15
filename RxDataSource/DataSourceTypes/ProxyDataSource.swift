@@ -21,7 +21,7 @@ import RxCocoa
 /// and emits them as its own changes.
 public final class ProxyDataSource: DataSource {
 
-	public let changes: BehaviorSubject<DataChange>
+	public let changes: BehaviorRelay<DataChange>
 	fileprivate let disposable = CompositeDisposable()
 	fileprivate var lastDisposable: Disposable?
 
@@ -36,20 +36,20 @@ public final class ProxyDataSource: DataSource {
 	public let animatesChanges: BehaviorRelay<Bool>
 
 	public init(_ inner: DataSource = EmptyDataSource(), animateChanges: Bool = true) {
-		self.changes = BehaviorSubject(value: DataChangeBatch([]))
+		self.changes = BehaviorRelay(value: DataChangeBatch([]))
 		self.innerDataSource = BehaviorRelay(value: inner)
 		self.animatesChanges = BehaviorRelay(value: animateChanges)
-		self.lastDisposable = inner.changes.subscribe { [weak self] in
-			self?.changes.on($0)
-		}
+		self.lastDisposable = inner.changes.subscribe(onNext: { [weak self] in
+			self?.changes.accept($0)
+		})
 
 		let subscription = self.innerDataSource.combinePrevious(inner).subscribe(onNext: { [weak self] old, new in
 			if let this = self {
 				this.lastDisposable?.dispose()
-				this.changes.onNext(changeDataSources(old, new, this.animatesChanges.value))
-				this.lastDisposable = new.changes.subscribe { [weak self] in
-					self?.changes.on($0)
-				}
+				this.changes.accept(changeDataSources(old, new, this.animatesChanges.value))
+				this.lastDisposable = new.changes.subscribe(onNext: { [weak self] in
+					self?.changes.accept($0)
+				})
 			}
 		})
 		_  = self.disposable.insert(subscription)

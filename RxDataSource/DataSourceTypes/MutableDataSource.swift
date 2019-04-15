@@ -17,7 +17,7 @@ import RxCocoa
 /// a corresponding dataChange.
 public final class MutableDataSource<T>: DataSource {
 
-	public let changes: BehaviorSubject<DataChange>
+	public let changes: BehaviorRelay<DataChange>
 
 	fileprivate let _items: BehaviorRelay<[T]>
 
@@ -28,7 +28,7 @@ public final class MutableDataSource<T>: DataSource {
 	public let supplementaryItems: [String: Any]
 
 	public init(_ items: [T] = [], supplementaryItems: [String: Any] = [:]) {
-		self.changes = BehaviorSubject(value: DataChangeBatch([]))
+		self.changes = BehaviorRelay(value: DataChangeBatch([]))
 		self._items = BehaviorRelay(value: items)
 		self.supplementaryItems = supplementaryItems
 	}
@@ -64,7 +64,7 @@ public final class MutableDataSource<T>: DataSource {
 		items.insert(contentsOf: items, at: index)
 		self._items.accept(items)
 		let change = DataChangeInsertItems(items.indices.map { z(index + $0) })
-		self.changes.onNext(DataChangeBatch([change]))
+		self.changes.accept(DataChangeBatch([change]))
 	}
 
 	/// Deletes an item at a given index
@@ -80,7 +80,7 @@ public final class MutableDataSource<T>: DataSource {
 		items.removeSubrange(range)
 		self._items.accept(items)
 		let change = DataChangeDeleteItems(range.map(z))
-		self.changes.onNext(DataChangeBatch([change]))
+		self.changes.accept(DataChangeBatch([change]))
 	}
 
 	/// Replaces an item at a given index with another item
@@ -90,7 +90,7 @@ public final class MutableDataSource<T>: DataSource {
 		items[index] = item
 		self._items.accept(items)
 		let change = DataChangeReloadItems(z(index))
-		self.changes.onNext(DataChangeBatch([change]))
+		self.changes.accept(DataChangeBatch([change]))
 	}
 
 	/// Moves an item at a given index to another index
@@ -101,7 +101,7 @@ public final class MutableDataSource<T>: DataSource {
 		items.insert(item, at: newIndex)
 		self._items.accept(items)
 		let change = DataChangeMoveItem(from: z(oldIndex), to: z(newIndex))
-		self.changes.onNext(DataChangeBatch([change]))
+		self.changes.accept(DataChangeBatch([change]))
 	}
 
 	/// Replaces all items with a given array of items
@@ -109,7 +109,7 @@ public final class MutableDataSource<T>: DataSource {
 	public func replaceItems(with items: [T]) {
 		self._items.accept(items)
 		let change = DataChangeReloadSections([0])
-		self.changes.onNext(DataChangeBatch([change]))
+		self.changes.accept(DataChangeBatch([change]))
 	}
 
 }

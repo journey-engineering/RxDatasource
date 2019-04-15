@@ -20,7 +20,7 @@ import RxCocoa
 /// a corresponding dataChange.
 public final class MutableCompositeDataSource: DataSource {
 
-	public let changes: BehaviorSubject<DataChange>
+	public let changes: BehaviorRelay<DataChange>
 	fileprivate let disposeBag = DisposeBag()
 	fileprivate let _innerDataSources: BehaviorRelay<[DataSource]>
 
@@ -29,11 +29,11 @@ public final class MutableCompositeDataSource: DataSource {
 	}
 
 	public init(_ inner: [DataSource] = []) {
-		self.changes = BehaviorSubject(value: DataChangeBatch([]))
+		self.changes = BehaviorRelay(value: DataChangeBatch([]))
 		self._innerDataSources = BehaviorRelay(value: inner)
-		self._innerDataSources.flatMap { changesOfInnerDataSources($0) }.subscribe { [weak self] in
-			self?.changes.on($0)
-		}.disposed(by: self.disposeBag)
+		self._innerDataSources.flatMap { changesOfInnerDataSources($0) }.subscribe(onNext: { [weak self] in
+			self?.changes.accept($0)
+		}).disposed(by: self.disposeBag)
 	}
 
 	public var numberOfSections: Int {
@@ -80,7 +80,7 @@ public final class MutableCompositeDataSource: DataSource {
 		let sections = dataSources.enumerated().flatMap { self.sections(of: $1, at: index + $0) }
 		if sections.count > 0 {
 			let change = DataChangeInsertSections(sections)
-			self.changes.onNext(change)
+			self.changes.accept(change)
 		}
 	}
 
@@ -99,7 +99,7 @@ public final class MutableCompositeDataSource: DataSource {
 		self._innerDataSources.accept(inner)
 		if sections.count > 0 {
 			let change = DataChangeDeleteSections(sections)
-			self.changes.onNext(change)
+			self.changes.accept(change)
 		}
 	}
 
@@ -121,7 +121,7 @@ public final class MutableCompositeDataSource: DataSource {
 		self._innerDataSources.accept(inner)
 		if !batch.isEmpty {
 			let change = DataChangeBatch(batch)
-			self.changes.onNext(change)
+			self.changes.accept(change)
 		}
 	}
 
@@ -140,7 +140,7 @@ public final class MutableCompositeDataSource: DataSource {
 		}
 		if !batch.isEmpty {
 			let change = DataChangeBatch(batch)
-			self.changes.onNext(change)
+			self.changes.accept(change)
 		}
 	}
 

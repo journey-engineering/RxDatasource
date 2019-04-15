@@ -31,7 +31,7 @@ import RxCocoa
 /// sections' `supplementaryItems` dictionary under some user-defined key.
 public final class AutoDiffSectionsDataSource<T>: DataSource {
 
-	public let changes: BehaviorSubject<DataChange>
+	public let changes: BehaviorRelay<DataChange>
 	fileprivate let disposeBag = DisposeBag()
 
 	/// Mutable array of dataSourceSections.
@@ -65,7 +65,7 @@ public final class AutoDiffSectionsDataSource<T>: DataSource {
 		compareSections: @escaping (DataSourceSection<T>, DataSourceSection<T>) -> Bool,
 		compareItems: @escaping (T, T) -> Bool)
 	{
-		self.changes = BehaviorSubject(value: DataChangeBatch([]))
+		self.changes = BehaviorRelay(value: DataChangeBatch([]))
 		self.sections = BehaviorRelay(value: sections)
 		self.compareSections = compareSections
 		self.compareItems = compareItems
@@ -94,9 +94,9 @@ public final class AutoDiffSectionsDataSource<T>: DataSource {
 		self.sections
 			.combinePrevious(sections)
 			.map(autoDiff)
-			.subscribe { [weak self] in
-				self?.changes.on($0)
-			}.disposed(by: self.disposeBag)
+			.subscribe(onNext: { [weak self] in
+				self?.changes.accept($0)
+			}).disposed(by: self.disposeBag)
 	}
 
 	public var numberOfSections: Int {

@@ -8,6 +8,7 @@
 
 import Foundation
 import RxSwift
+import RxCocoa
 
 /// `DataSource` implementation that is composed of an array
 /// of other dataSources (called inner dataSources).
@@ -21,23 +22,22 @@ import RxSwift
 /// to correspond to the structure of the compositeDataSource.
 public final class CompositeDataSource: DataSource {
 
-	public let changes: BehaviorSubject<DataChange>
+	public let changes: BehaviorRelay<DataChange>
 	fileprivate let disposeBag = DisposeBag()
 
 	public let innerDataSources: [DataSource]
 
 	public init(_ inner: [DataSource]) {
-		self.changes = BehaviorSubject(value: DataChangeBatch([]))
+		self.changes = BehaviorRelay(value: DataChangeBatch([]))
 		self.innerDataSources = inner
 		for (index, dataSource) in inner.enumerated() {
-			dataSource.changes.asObserver().subscribe { [weak self] change in
+			dataSource.changes.subscribe(onNext: { [weak self] change in
 				if let this = self {
 					let map = mapOutside(this.innerDataSources, index)
-					if let mapped = change.element?.mapSections(map) {
-						this.changes.onNext(mapped)
-					}
+					let mapped = change.mapSections(map)
+					this.changes.accept(mapped)
 				}
-			}.disposed(by: disposeBag)
+			}).disposed(by: disposeBag)
 		}
 	}
 

@@ -10,6 +10,7 @@ import Foundation
 import RxSwift
 import CoreData
 import UIKit
+import RxCocoa
 
 /// `DataSource` implementation whose items are Core Data managed objects fetched by an `NSFetchedResultsController`.
 ///
@@ -19,13 +20,13 @@ import UIKit
 /// in fetched objects and emit them as its own dataChanges.
 public final class FetchedResultsDataSource: DataSource {
 
-	public let changes: BehaviorSubject<DataChange>
+	public let changes: BehaviorRelay<DataChange>
 
 	fileprivate let frc: NSFetchedResultsController<NSFetchRequestResult>
 	fileprivate let frcDelegate: Delegate
 
 	public init(fetchRequest: NSFetchRequest<NSFetchRequestResult>, managedObjectContext: NSManagedObjectContext, sectionNameKeyPath: String? = nil, cacheName: String? = nil) throws {
-		self.changes = BehaviorSubject(value: DataChangeBatch([]))
+		self.changes = BehaviorRelay(value: DataChangeBatch([]))
 		self.frc = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: managedObjectContext, sectionNameKeyPath: sectionNameKeyPath, cacheName: cacheName)
 		self.frcDelegate = Delegate(subject: self.changes)
 		self.frc.delegate = self.frcDelegate
@@ -68,10 +69,10 @@ public final class FetchedResultsDataSource: DataSource {
 	}
 
 	@objc fileprivate final class Delegate: NSObject, NSFetchedResultsControllerDelegate {
-		let subject: BehaviorSubject<DataChange>
+		let subject: BehaviorRelay<DataChange>
 		var currentBatch: [DataChange] = []
 
-		init(subject: BehaviorSubject<DataChange>) {
+		init(subject: BehaviorRelay<DataChange>) {
 			self.subject = subject
 		}
 
@@ -80,7 +81,7 @@ public final class FetchedResultsDataSource: DataSource {
 		}
 
 		@objc func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-			self.subject.onNext(DataChangeBatch(self.currentBatch))
+			self.subject.accept(DataChangeBatch(self.currentBatch))
 			self.currentBatch = []
 		}
 
