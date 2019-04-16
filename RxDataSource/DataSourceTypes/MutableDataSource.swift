@@ -60,9 +60,9 @@ public final class MutableDataSource<T>: DataSource {
 	/// Inserts items at a given index
 	/// and emits `DataChangeInsertItems`.
 	public func insertItems(_ items: [T], at index: Int) {
-		var items = self._items.value
-		items.insert(contentsOf: items, at: index)
-		self._items.accept(items)
+		var itemsCopy = self._items.value
+		itemsCopy.insert(contentsOf: items, at: index)
+		self._items.accept(itemsCopy)
 		let change = DataChangeInsertItems(items.indices.map { z(index + $0) })
 		self.changes.accept(DataChangeBatch([change]))
 	}
