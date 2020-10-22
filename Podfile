@@ -5,12 +5,12 @@ target 'RxDataSource-iOS' do
 	use_frameworks!
 	# Pods for RXDataSource-iOS
 	pod 'RxSwift'
-	pod 'RxCocoa'
+        pod 'RxCocoa'
 end
 
 target 'RxDataSource-tvOS' do
 	use_frameworks!
 	# Pods for RXDataSource-tvOS
 	pod 'RxSwift'
-	pod 'RxCocoa'
+        pod 'RxCocoa'
 end

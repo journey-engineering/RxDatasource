@@ -87,8 +87,6 @@
 		21E1FDC921B17D570047A580 /* AutoDiffDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21E1FD9F21B17D570047A580 /* AutoDiffDataSource.swift */; };
 		21E1FDCA21B17D570047A580 /* AutoDiffSectionsDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21E1FDA021B17D570047A580 /* AutoDiffSectionsDataSource.swift */; };
 		83981E9448BB211B94ABE5AD /* Pods_RxDataSource_tvOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C7618DBD49914D006F1D7B9C /* Pods_RxDataSource_tvOS.framework */; };
-		A28B8B13D528014F0D5EB72D /* Pods_RXDataSource_tvOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D85B132FA046021E773AB49E /* Pods_RXDataSource_tvOS.framework */; };
-		B07B3BD8852F78368D6859A7 /* Pods_RXDataSource_iOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EDB0D941C300C44E0D9F95AB /* Pods_RXDataSource_iOS.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -142,8 +140,6 @@
 		C7618DBD49914D006F1D7B9C /* Pods_RxDataSource_tvOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RxDataSource_tvOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CFCDBBF47A52E841E93B4D17 /* Pods-RxDataSource-tvOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RxDataSource-tvOS.debug.xcconfig"; path = "Target Support Files/Pods-RxDataSource-tvOS/Pods-RxDataSource-tvOS.debug.xcconfig"; sourceTree = "<group>"; };
 		D341DB57C800EAD178B0899A /* Pods-RxDataSource-iOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RxDataSource-iOS.release.xcconfig"; path = "Target Support Files/Pods-RxDataSource-iOS/Pods-RxDataSource-iOS.release.xcconfig"; sourceTree = "<group>"; };
-		D85B132FA046021E773AB49E /* Pods_RXDataSource_tvOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RXDataSource_tvOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		EDB0D941C300C44E0D9F95AB /* Pods_RXDataSource_iOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RXDataSource_iOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F8689C812C872ECB8C4B37EA /* Pods-RxDataSource-tvOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RxDataSource-tvOS.release.xcconfig"; path = "Target Support Files/Pods-RxDataSource-tvOS/Pods-RxDataSource-tvOS.release.xcconfig"; sourceTree = "<group>"; };
 		FCBEE8DC1DA8F41C00F59863 /* RxDataSource.temp_caseinsensitive_rename.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = RxDataSource.temp_caseinsensitive_rename.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -153,7 +149,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B07B3BD8852F78368D6859A7 /* Pods_RXDataSource_iOS.framework in Frameworks */,
 				0AF630EFC30B66ED779778E1 /* Pods_RxDataSource_iOS.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -162,7 +157,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A28B8B13D528014F0D5EB72D /* Pods_RXDataSource_tvOS.framework in Frameworks */,
 				83981E9448BB211B94ABE5AD /* Pods_RxDataSource_tvOS.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -192,8 +186,6 @@
 		022B10351B2F341200DD4DCD /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				EDB0D941C300C44E0D9F95AB /* Pods_RXDataSource_iOS.framework */,
-				D85B132FA046021E773AB49E /* Pods_RXDataSource_tvOS.framework */,
 				9314772CEB8B58DD092C02C2 /* Pods_RxDataSource_iOS.framework */,
 				C7618DBD49914D006F1D7B9C /* Pods_RxDataSource_tvOS.framework */,
 			);
